@@ -10,10 +10,9 @@ See the python subdir for example usage. sendtest.py and subscribertest.py can w
 # Functions
 
 ### /subscribe or /unsubscribe
-- Arg0: The address to subscribe/unsubscribe to/from, e.g. "/my_func"
-- Arg1: The port of the subscriber
-- Example: ["/subscribe", "/test", 13332] (This will send all /test messages to the subscriber on its inferred ip and provided port)
-- Explanation: A subscribing osc server that wants to receive messages for the given OSC address (arg0) must provide both
-    this OSC address and its own port. The ip of the server is inferred from the udp call. Once a subscriber is registered,
-    all messages for the subscribed address will be cloned and sent to that subscriber immediately upon being received by
-    the router. 
+- Arg0: The OSC address/function to subscribe/unsubscribe to/from, e.g. "/my_func"
+- Arg1: The ip of the subscriber (string)
+- Arg2: The port of the subscriber (int)
+- Example: ["/subscribe", "/test", "127.0.0.1", 13332] (This will send all /test messages to the subscriber of the given ip/port)
+- Explanation: Once a subscriber is registered, all messages for the subscribed address will be cloned and sent to that subscriber 
+  immediately upon being received by the router. 

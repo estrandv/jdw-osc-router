@@ -17,8 +17,8 @@ server = osc_server.ThreadingOSCUDPServer(
 print("Serving on {}".format(server.server_address))
 
 client = udp_client.SimpleUDPClient("127.0.0.1", 13339)
-# NOTE: how python cannot supply a "host port" for the udp client (it is assigned at random).
-# This contributed to the choice of having subscriber port be a provided arg.
-client.send_message("/subscribe", ["/test", "13331"])
+
+# Subscribe self (note same port as in "server")
+client.send_message("/subscribe", ["/test", "127.0.0.1", 13331])
 
 server.serve_forever()

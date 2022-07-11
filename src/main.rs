@@ -47,9 +47,8 @@ fn main() {
                         if msg.addr == "/subscribe" || msg.addr == "/unsubscribe" {
                             // Handle subscribe/unsubscribe requests
 
-                            // NOTE: Currently forcing subscribers to manually supply their inport due to lack of
-                            //  socket port selection in python osc library (update readme if this changes)
-                            let port = msg.args[1].clone().string();
+                            let ip = msg.args[1].clone().string();
+                            let port = msg.args[2].clone().int();
 
                             println!("Received {}", msg.addr);
 
@@ -58,18 +57,18 @@ fn main() {
                                 None => None
                             };
 
-                            if osc_address.is_some() && port.is_some() {
+                            if osc_address.is_some() && port.is_some() && ip.is_some() {
 
                                 // Clear subscriptions for same client (osc_addr/ip/port)
                                 // Note how this is done for subscribe as well in order to avoid duplicates
                                 subscribers.lock().unwrap().retain(|sdat| sdat.socket.port().to_string() != port.clone().unwrap()
-                                    && sdat.socket.ip().to_string() != addr.ip().to_string() && sdat.osc_address != osc_address.clone().unwrap());
+                                    && sdat.socket.ip().to_string() != ip.unwrap() && sdat.osc_address != osc_address.clone().unwrap());
 
                                 // Actual subscribe logic
                                 if msg.addr == "/subscribe" {
 
-                                    // Construct a subscriber address using the caller ip and the port arg (see note regarding port)
-                                    let sub_addr_result = SocketAddr::from_str(&format!("{}:{}", addr.ip(), port.unwrap()));
+                                    // Construct a subscriber address using the ip and port args
+                                    let sub_addr_result = SocketAddr::from_str(&format!("{}:{}", ip.unwrap(), port.unwrap()));
 
                                     if sub_addr_result.is_ok() {
 
@@ -77,6 +76,7 @@ fn main() {
                                             socket: sub_addr_result.unwrap(),
                                             osc_address: osc_address.unwrap()
                                         });
+
                                     } else {
                                         println!("WARN: Unable to register socket for provided subscriber address: {}", sub_addr_result.err().unwrap())
                                     }
