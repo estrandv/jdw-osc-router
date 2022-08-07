@@ -61,8 +61,18 @@ fn main() {
 
                                 // Clear subscriptions for same client (osc_addr/ip/port)
                                 // Note how this is done for subscribe as well in order to avoid duplicates
-                                subscribers.lock().unwrap().retain(|sdat| (sdat.socket.port() as i32) != port.clone().unwrap()
-                                    && sdat.socket.ip().to_string() != ip.clone().unwrap() && sdat.osc_address != osc_address.clone().unwrap());
+                                subscribers.lock().unwrap()
+                                    .retain(|sub_data| {
+                                        let sub_port = sub_data.socket.port() as i32;
+                                        let sub_addr = sub_data.socket.ip().to_string();
+                                        let sub_osc_addr = sub_data.osc_address.clone();
+
+                                        sub_port != port.clone().unwrap()
+                                            || sub_addr != ip.clone().unwrap()
+                                            || sub_osc_addr != osc_address.clone().unwrap()
+
+                                    });
+
 
                                 // Actual subscribe logic
                                 if msg.addr == "/subscribe" {
