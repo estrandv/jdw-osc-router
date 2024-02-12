@@ -11,11 +11,13 @@ client.send_message("/subscribe", ["/note_on_timed", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/play_sample", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/note_modify", "127.0.0.1", jdw_sc_port])
+client.send_message("/subscribe", ["/read_scd", "127.0.0.1", jdw_sc_port])
 
 
 client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_seq_port])
 client.send_message("/subscribe", ["/set_bpm", "127.0.0.1", jdw_seq_port])
 client.send_message("/subscribe", ["/hard_stop", "127.0.0.1", jdw_seq_port])
+client.send_message("/subscribe", ["/wipe_on_finish", "127.0.0.1", jdw_seq_port])
 
 jdw_sample_port = 12367
 client.send_message("/subscribe", ["/play_sample", "127.0.0.1", jdw_sample_port])

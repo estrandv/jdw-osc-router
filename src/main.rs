@@ -32,7 +32,7 @@ fn main() {
 
     // NOTE: Still not sure if I'm using buf correctly here
     // - if decoder arg is set too low we can't read large packets...
-    let mut buf = [0u8; 33000];
+    let mut buf = [0u8; 333000];
 
     loop {
 
