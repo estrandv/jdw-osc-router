@@ -12,6 +12,7 @@ client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/play_sample", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/note_modify", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/read_scd", "127.0.0.1", jdw_sc_port])
+client.send_message("/subscribe", ["/create_synthdef", "127.0.0.1", jdw_sc_port])
 
 
 client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_seq_port])
