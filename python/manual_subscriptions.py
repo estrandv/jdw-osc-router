@@ -8,11 +8,14 @@ client = udp_client.SimpleUDPClient("127.0.0.1", 13339)
 jdw_sc_port = 13331
 jdw_seq_port = 14441
 client.send_message("/subscribe", ["/note_on_timed", "127.0.0.1", jdw_sc_port])
+client.send_message("/subscribe", ["/note_on", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_sc_port])
+client.send_message("/subscribe", ["/c_set", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/play_sample", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/note_modify", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/read_scd", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/create_synthdef", "127.0.0.1", jdw_sc_port])
+client.send_message("/subscribe", ["/load_sample", "127.0.0.1", jdw_sc_port])
 
 
 client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_seq_port])
