@@ -19,8 +19,7 @@ fn main() {
         - Extended functions after live testing (e.g. "/unsubscribe_all" or "/ping")
      */
 
-    let subscriber_data: Vec<SubscriberData> = vec![];
-    let subscribers = Arc::new(Mutex::new(subscriber_data));
+    let mut subscriber_data: Vec<SubscriberData> = vec![];
 
     let local_addr = match SocketAddrV4::from_str("127.0.0.1:13339") {
         Ok(addr) => addr,
@@ -63,7 +62,7 @@ fn main() {
 
                                 // Clear subscriptions for same client (osc_addr/ip/port)
                                 // Note how this is done for subscribe as well in order to avoid duplicates
-                                subscribers.lock().unwrap()
+                                subscriber_data
                                     .retain(|sub_data| {
                                         let sub_port = sub_data.socket.port() as i32;
                                         let sub_addr = sub_data.socket.ip().to_string();
@@ -84,7 +83,7 @@ fn main() {
 
                                     if sub_addr_result.is_ok() {
 
-                                        subscribers.lock().unwrap().push(SubscriberData {
+                                        subscriber_data.push(SubscriberData {
                                             socket: sub_addr_result.unwrap(),
                                             osc_address: osc_address.unwrap()
                                         });
@@ -104,7 +103,7 @@ fn main() {
                             let msg_buf = encoder::encode(&packet).unwrap();
 
                             // Handle regular messages that are to be sent to subscribers
-                            subscribers.lock().unwrap().iter()
+                            subscriber_data.iter()
                                 .filter(|sub| sub.osc_address == msg.addr)
                                 .for_each(|sub| {
                                     println!("Sending to subscriber at address {}:{}...", sub.socket.ip(), sub.socket.port());
@@ -119,7 +118,7 @@ fn main() {
                         let msg_buf = encoder::encode(&packet).unwrap();
 
                         // Send bundle to subscribers. Note the custom made up address (/bundle) used for this scenario.
-                        subscribers.lock().unwrap().iter()
+                        subscriber_data.iter()
                             .filter(|sub| sub.osc_address == "/bundle")
                             .for_each(|sub| {
                                 println!("Sending to subscriber at address {}:{}...", sub.socket.ip(), sub.socket.port());
