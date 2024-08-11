@@ -19,7 +19,7 @@ client.send_message("/subscribe", ["/create_synthdef", "127.0.0.1", jdw_sc_port]
 client.send_message("/subscribe", ["/load_sample", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/free_notes", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/clear_nrt", "127.0.0.1", jdw_sc_port])
-
+client.send_message("/subscribe", ["/set_bpm", "127.0.0.1", jdw_sc_port])
 
 client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_seq_port])
 client.send_message("/subscribe", ["/set_bpm", "127.0.0.1", jdw_seq_port])
