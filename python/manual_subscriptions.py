@@ -4,10 +4,11 @@ from pythonosc import udp_client
 
 client = udp_client.SimpleUDPClient("127.0.0.1", 13339)
 
-# jdw-sc subscriptions 
+# jdw-sc subscriptions
 jdw_sc_port = 13331
 jdw_seq_port = 14441
 keyboard_port = 17777
+pycompose_port = 13456
 client.send_message("/subscribe", ["/note_on_timed", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/note_on", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_sc_port])
@@ -20,6 +21,7 @@ client.send_message("/subscribe", ["/load_sample", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/free_notes", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/clear_nrt", "127.0.0.1", jdw_sc_port])
 client.send_message("/subscribe", ["/set_bpm", "127.0.0.1", jdw_sc_port])
+client.send_message("/subscribe", ["/jdw_sc_event_trigger", "127.0.0.1", jdw_sc_port])
 
 client.send_message("/subscribe", ["/bundle", "127.0.0.1", jdw_seq_port])
 client.send_message("/subscribe", ["/set_bpm", "127.0.0.1", jdw_seq_port])
@@ -28,6 +30,7 @@ client.send_message("/subscribe", ["/wipe_on_finish", "127.0.0.1", jdw_seq_port]
 
 client.send_message("/subscribe", ["/set_bpm", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/keyboard_quantization", "127.0.0.1", keyboard_port])
+client.send_message("/subscribe", ["/keyboard_octave", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/keyboard_args", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/keyboard_pad_args", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/keyboard_pad_samples", "127.0.0.1", keyboard_port])
@@ -37,8 +40,13 @@ client.send_message("/subscribe", ["/keyboard_mode_synth", "127.0.0.1", keyboard
 client.send_message("/subscribe", ["/keyboard_mode_sampler", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/keyboard_instrument_name", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/loop_started", "127.0.0.1", keyboard_port])
+client.send_message("/subscribe", ["/jdw_sc_event", "127.0.0.1", keyboard_port])
 
-# Test port 
+# Pycompose
+client.send_message("/subscribe", ["/nrt_record_finished", "127.0.0.1", pycompose_port])
+
+
+# Test port
 client.send_message("/subscribe", ["/sequencer_tick_test", "127.0.0.1", 15454])
 
 
