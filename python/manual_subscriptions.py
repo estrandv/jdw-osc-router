@@ -39,7 +39,6 @@ client.send_message("/subscribe", ["/keyboard_letter_index", "127.0.0.1", keyboa
 client.send_message("/subscribe", ["/keyboard_mode_synth", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/keyboard_mode_sampler", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/keyboard_instrument_name", "127.0.0.1", keyboard_port])
-client.send_message("/subscribe", ["/loop_started", "127.0.0.1", keyboard_port])
 client.send_message("/subscribe", ["/jdw_sc_event", "127.0.0.1", keyboard_port])
 
 # Pycompose
