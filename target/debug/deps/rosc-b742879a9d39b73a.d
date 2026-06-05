@@ -1,0 +1,12 @@
+/home/estrandv/programming/jdw-osc-router/target/debug/deps/librosc-b742879a9d39b73a.rmeta: /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/lib.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/errors.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/types.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/decoder.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/encoder.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/address.rs
+
+/home/estrandv/programming/jdw-osc-router/target/debug/deps/librosc-b742879a9d39b73a.rlib: /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/lib.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/errors.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/types.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/decoder.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/encoder.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/address.rs
+
+/home/estrandv/programming/jdw-osc-router/target/debug/deps/rosc-b742879a9d39b73a.d: /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/lib.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/errors.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/types.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/decoder.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/encoder.rs /home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/address.rs
+
+/home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/lib.rs:
+/home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/errors.rs:
+/home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/types.rs:
+/home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/decoder.rs:
+/home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/encoder.rs:
+/home/estrandv/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rosc-0.7.0/src/address.rs:
