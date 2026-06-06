@@ -34,7 +34,9 @@ fn main() {
                 }
 
                 let (_, packet) = rosc::decoder::decode_udp(&buf[..size]).unwrap();
-                match packet.clone() {
+                let msg_buf = encoder::encode(&packet).unwrap();
+
+                match packet {
                     OscPacket::Message(msg) => {
                         if !quiet {
                             println!("OSC address: {}", msg.addr);
@@ -56,13 +58,9 @@ fn main() {
 
                             if osc_address.is_some() && port.is_some() && ip.is_some() {
                                 subscriber_data.retain(|sub_data| {
-                                    let sub_port = sub_data.socket.port() as i32;
-                                    let sub_addr = sub_data.socket.ip().to_string();
-                                    let sub_osc_addr = sub_data.osc_address.clone();
-
-                                    sub_port != port.clone().unwrap()
-                                        || sub_addr != ip.clone().unwrap()
-                                        || sub_osc_addr != osc_address.clone().unwrap()
+                                    sub_data.socket.port() as i32 != port.clone().unwrap()
+                                        || sub_data.socket.ip().to_string() != ip.clone().unwrap()
+                                        || sub_data.osc_address != osc_address.clone().unwrap()
                                 });
 
                                 if msg.addr == "/subscribe" {
@@ -85,8 +83,6 @@ fn main() {
                                 println!("WARN: Malformed subscribe/unsubscribe message - either address or port missing");
                             }
                         } else {
-                            let msg_buf = encoder::encode(&packet).unwrap();
-
                             subscriber_data
                                 .iter()
                                 .filter(|sub| sub.osc_address == msg.addr)
@@ -102,12 +98,10 @@ fn main() {
                                 });
                         }
                     }
-                    OscPacket::Bundle(bundle) => {
+                    OscPacket::Bundle(_bundle) => {
                         if !quiet {
-                            println!("OSC Bundle: {:?}", bundle);
+                            println!("OSC Bundle: {:?}", _bundle);
                         }
-
-                        let msg_buf = encoder::encode(&packet).unwrap();
 
                         subscriber_data
                             .iter()
