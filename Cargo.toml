@@ -4,6 +4,14 @@ version = "0.1.0"
 authors = ["Emstrevk <emil.strandvik@gmail.com>"]
 edition = "2021"
 
+[lib]
+name = "jdw_osc_router"
+path = "src/lib.rs"
+
+[[bin]]
+name = "jdw-osc-router"
+path = "src/main.rs"
+
 [dependencies]
 rosc = "0.7.0"
 serde = { version = "1", features = ["derive"] }

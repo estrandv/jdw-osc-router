@@ -75,13 +75,15 @@ pub fn load(config_path: &str) -> Config {
         merge_config(&mut cfg, &central);
     }
 
-    // Layer 2: per-app config.toml (overrides central)
-    if let Ok(contents) = std::fs::read_to_string(config_path) {
-        if let Ok(local) = toml::from_str::<TomlValue>(&contents) {
-            merge_config(&mut cfg, &local);
+    // Layer 2: per-app config.toml (overrides central); skip if path is empty
+    if !config_path.is_empty() {
+        if let Ok(contents) = std::fs::read_to_string(config_path) {
+            if let Ok(local) = toml::from_str::<TomlValue>(&contents) {
+                merge_config(&mut cfg, &local);
+            }
+        } else {
+            eprintln!("Warning: Config file '{}' not found. Using defaults.", config_path);
         }
-    } else {
-        eprintln!("Warning: Config file '{}' not found. Using defaults.", config_path);
     }
 
     cfg
