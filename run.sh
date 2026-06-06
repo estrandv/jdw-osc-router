@@ -1,7 +1,7 @@
 #!/bin/bash
 
 trap 'kill $BGPID; exit' INT
-cargo run &
+cargo run -- "$@" &
 BGPID=$! # Kill cargo subprocess on ctrl+c
 sleep 1
 echo "Performing manual subscriptions..."
