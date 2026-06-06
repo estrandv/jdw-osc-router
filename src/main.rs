@@ -1,8 +1,10 @@
 use rosc::encoder;
 use rosc::OscPacket;
 use std::env;
-use std::net::{SocketAddr, SocketAddrV4, UdpSocket};
+use std::net::{SocketAddr, UdpSocket};
 use std::str::FromStr;
+
+mod config;
 
 struct SubscriberData {
     socket: SocketAddr,
@@ -10,21 +12,25 @@ struct SubscriberData {
 }
 
 fn main() {
-    let quiet = env::args().any(|a| a == "-q" || a == "--quiet");
+    let args: Vec<String> = env::args().collect();
+    let quiet = args.iter().any(|a| a == "-q" || a == "--quiet");
+    let config_path = args
+        .iter()
+        .skip(1)
+        .skip_while(|a| a.starts_with('-'))
+        .next()
+        .map(|s| s.as_str())
+        .unwrap_or("config.toml");
 
-    let mut subscriber_data: Vec<SubscriberData> = vec![];
-
-    let local_addr = match SocketAddrV4::from_str("127.0.0.1:13339") {
-        Ok(addr) => addr,
-        Err(_) => panic!("Invalid address 127.0.0.1:13339"),
-    };
-
+    let config = config::load(config_path);
+    let local_addr = config.bind_addr();
     let sock = UdpSocket::bind(local_addr).unwrap();
     if !quiet {
         println!("Listening to {}", local_addr);
     }
 
-    let mut buf = [0u8; 333000];
+    let mut buf = vec![0u8; config.buffer_size];
+    let mut subscriber_data: Vec<SubscriberData> = vec![];
 
     loop {
         match sock.recv_from(&mut buf) {
