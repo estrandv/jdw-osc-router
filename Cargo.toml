@@ -13,6 +13,8 @@ name = "jdw-osc-router"
 path = "src/main.rs"
 
 [dependencies]
+log = "0.4"
 rosc = "0.7.0"
 serde = { version = "1", features = ["derive"] }
+simple_logger = "5.0.0"
 toml = "0.8"

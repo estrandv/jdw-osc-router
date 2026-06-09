@@ -15,12 +15,18 @@ struct SubscriberData {
 /// * `config_path` – path to the per-app `config.toml` (falls back to defaults + central config).
 /// * `quiet`       – suppress non-error log output.
 pub fn run(config_path: &str, quiet: bool) {
+    let _ = simple_logger::SimpleLogger::new()
+        .with_level(if quiet {
+            log::LevelFilter::Error
+        } else {
+            log::LevelFilter::Info
+        })
+        .init();
+
     let config = config::load(config_path);
     let local_addr = config.bind_addr();
     let sock = UdpSocket::bind(local_addr).unwrap();
-    if !quiet {
-        println!("Listening to {}", local_addr);
-    }
+    log::info!("Listening to {}", local_addr);
 
     let mut buf = vec![0u8; config.buffer_size];
     let mut subscriber_data: Vec<SubscriberData> = vec![];
@@ -28,27 +34,21 @@ pub fn run(config_path: &str, quiet: bool) {
     loop {
         match sock.recv_from(&mut buf) {
             Ok((size, addr)) => {
-                if !quiet {
-                    println!("Received packet with size {} from: {}", size, addr);
-                }
+                log::debug!("Received packet with size {} from: {}", size, addr);
 
                 let (_, packet) = rosc::decoder::decode_udp(&buf[..size]).unwrap();
                 let msg_buf = encoder::encode(&packet).unwrap();
 
                 match packet {
                     OscPacket::Message(msg) => {
-                        if !quiet {
-                            println!("OSC address: {}", msg.addr);
-                            println!("OSC arguments: {:?}", msg.args);
-                        }
+                        log::debug!("OSC address: {}", msg.addr);
+                        log::debug!("OSC arguments: {:?}", msg.args);
 
                         if msg.addr == "/subscribe" || msg.addr == "/unsubscribe" {
                             let ip = msg.args[1].clone().string();
                             let port = msg.args[2].clone().int();
 
-                            if !quiet {
-                                println!("Received {}", msg.addr);
-                            }
+                            log::debug!("Received {}", msg.addr);
 
                             let osc_address = match msg.args.get(0) {
                                 Some(arg) => arg.clone().string(),
@@ -74,52 +74,46 @@ pub fn run(config_path: &str, quiet: bool) {
                                             socket: sub_addr_result.unwrap(),
                                             osc_address: osc_address.unwrap(),
                                         });
-                                    } else if !quiet {
-                                        println!("WARN: Unable to register socket for provided subscriber address: {}", sub_addr_result.err().unwrap())
+                                    } else {
+                                        log::warn!("Unable to register socket for provided subscriber address: {}", sub_addr_result.err().unwrap())
                                     }
                                 }
-                            } else if !quiet {
-                                println!("WARN: Malformed subscribe/unsubscribe message - either address or port missing");
+                            } else {
+                                log::warn!("Malformed subscribe/unsubscribe message - either address or port missing");
                             }
                         } else {
                             subscriber_data
                                 .iter()
                                 .filter(|sub| sub.osc_address == msg.addr)
                                 .for_each(|sub| {
-                                    if !quiet {
-                                        println!(
-                                            "Sending to subscriber at address {}:{}...",
-                                            sub.socket.ip(),
-                                            sub.socket.port()
-                                        );
-                                    }
+                                    log::debug!(
+                                        "Sending to subscriber at address {}:{}...",
+                                        sub.socket.ip(),
+                                        sub.socket.port()
+                                    );
                                     let _ = sock.send_to(&msg_buf, sub.socket);
                                 });
                         }
                     }
                     OscPacket::Bundle(_bundle) => {
-                        if !quiet {
-                            println!("OSC Bundle: {:?}", _bundle);
-                        }
+                        log::debug!("OSC Bundle: {:?}", _bundle);
 
                         subscriber_data
                             .iter()
                             .filter(|sub| sub.osc_address == "/bundle")
                             .for_each(|sub| {
-                                if !quiet {
-                                    println!(
-                                        "Sending to subscriber at address {}:{}...",
-                                        sub.socket.ip(),
-                                        sub.socket.port()
-                                    );
-                                }
+                                log::debug!(
+                                    "Sending to subscriber at address {}:{}...",
+                                    sub.socket.ip(),
+                                    sub.socket.port()
+                                );
                                 let _ = sock.send_to(&msg_buf, sub.socket);
                             });
                     }
                 }
             }
             Err(e) => {
-                println!("Error receiving from socket: {}", e);
+                log::error!("Error receiving from socket: {}", e);
                 break;
             }
         }
