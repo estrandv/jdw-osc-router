@@ -2,13 +2,9 @@ pub mod config;
 
 use rosc::encoder;
 use rosc::OscPacket;
+use std::collections::HashMap;
 use std::net::{SocketAddr, UdpSocket};
 use std::str::FromStr;
-
-struct SubscriberData {
-    socket: SocketAddr,
-    osc_address: String,
-}
 
 /// Run the OSC router. Blocks the calling thread indefinitely.
 ///
@@ -29,7 +25,7 @@ pub fn run(config_path: &str, quiet: bool) {
     log::info!("Listening to {}", local_addr);
 
     let mut buf = vec![0u8; config.buffer_size];
-    let mut subscriber_data: Vec<SubscriberData> = vec![];
+    let mut subscriber_data: HashMap<String, Vec<SocketAddr>> = HashMap::new();
 
     loop {
         match sock.recv_from(&mut buf) {
@@ -55,60 +51,62 @@ pub fn run(config_path: &str, quiet: bool) {
                                 None => None,
                             };
 
-                            if osc_address.is_some() && port.is_some() && ip.is_some() {
-                                subscriber_data.retain(|sub_data| {
-                                    sub_data.socket.port() as i32 != port.clone().unwrap()
-                                        || sub_data.socket.ip().to_string() != ip.clone().unwrap()
-                                        || sub_data.osc_address != osc_address.clone().unwrap()
-                                });
+                            if let (Some(ref addr_pattern), Some(p), Some(i)) =
+                                (&osc_address, port, ip)
+                            {
+                                // Remove matching subscriber entry
+                                if let Some(addrs) = subscriber_data.get_mut(addr_pattern) {
+                                    addrs.retain(|s| {
+                                        s.port() as i32 != p || s.ip().to_string() != i
+                                    });
+                                    if addrs.is_empty() {
+                                        subscriber_data.remove(addr_pattern);
+                                    }
+                                }
 
                                 if msg.addr == "/subscribe" {
-                                    let sub_addr_result = SocketAddr::from_str(&format!(
-                                        "{}:{}",
-                                        ip.unwrap(),
-                                        port.unwrap()
-                                    ));
-
-                                    if sub_addr_result.is_ok() {
-                                        subscriber_data.push(SubscriberData {
-                                            socket: sub_addr_result.unwrap(),
-                                            osc_address: osc_address.unwrap(),
-                                        });
-                                    } else {
-                                        log::warn!("Unable to register socket for provided subscriber address: {}", sub_addr_result.err().unwrap())
+                                    match SocketAddr::from_str(&format!("{}:{}", i, p)) {
+                                        Ok(socket) => {
+                                            subscriber_data
+                                                .entry(osc_address.unwrap())
+                                                .or_default()
+                                                .push(socket);
+                                        }
+                                        Err(e) => log::warn!(
+                                            "Unable to register socket for provided subscriber address: {}",
+                                            e
+                                        ),
                                     }
                                 }
                             } else {
                                 log::warn!("Malformed subscribe/unsubscribe message - either address or port missing");
                             }
                         } else {
-                            subscriber_data
-                                .iter()
-                                .filter(|sub| sub.osc_address == msg.addr)
-                                .for_each(|sub| {
+                            if let Some(subscribers) = subscriber_data.get(&msg.addr) {
+                                for sub in subscribers {
                                     log::debug!(
                                         "Sending to subscriber at address {}:{}...",
-                                        sub.socket.ip(),
-                                        sub.socket.port()
+                                        sub.ip(),
+                                        sub.port()
                                     );
-                                    let _ = sock.send_to(&msg_buf, sub.socket);
-                                });
+                                    let _ = sock.send_to(&msg_buf, sub);
+                                }
+                            }
                         }
                     }
                     OscPacket::Bundle(_bundle) => {
                         log::debug!("OSC Bundle: {:?}", _bundle);
 
-                        subscriber_data
-                            .iter()
-                            .filter(|sub| sub.osc_address == "/bundle")
-                            .for_each(|sub| {
+                        if let Some(subscribers) = subscriber_data.get("/bundle") {
+                            for sub in subscribers {
                                 log::debug!(
                                     "Sending to subscriber at address {}:{}...",
-                                    sub.socket.ip(),
-                                    sub.socket.port()
+                                    sub.ip(),
+                                    sub.port()
                                 );
-                                let _ = sock.send_to(&msg_buf, sub.socket);
-                            });
+                                let _ = sock.send_to(&msg_buf, sub);
+                            }
+                        }
                     }
                 }
             }
